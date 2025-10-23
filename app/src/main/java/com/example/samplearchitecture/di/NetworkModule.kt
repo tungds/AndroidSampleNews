@@ -1,5 +1,6 @@
 package com.example.samplearchitecture.di
 
+import com.example.samplearchitecture.data.remote.NewsApiService
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -43,5 +44,11 @@ object NetworkModule {
             .client(okHttpClient)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideNewsApiService(retrofit: Retrofit): NewsApiService{
+        return retrofit.create(NewsApiService::class.java)
     }
 }
