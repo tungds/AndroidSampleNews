@@ -4,18 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.android)
     id("kotlin-kapt")
+    id("com.google.devtools.ksp")
 
-}
-
-kotlin {
-    jvmToolchain(11)
-}
-
-kapt {
-    javacOptions {
-        option("-source", "11")
-        option("-target", "11")
-    }
 }
 
 android {
@@ -49,7 +39,21 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+
+    kapt {
+        javacOptions {
+            option("-source", "11")
+            option("-target", "11")
+        }
+    }
+
     kotlin {
+        jvmToolchain(11)
         compilerOptions {
             freeCompilerArgs.addAll(listOf("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode"))
         }
@@ -85,7 +89,7 @@ dependencies {
     implementation(libs.converter.moshi)
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.moshi)
-    kapt(libs.moshi.kotlin.generator)
+    ksp(libs.moshi.kotlin.generator)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
@@ -97,6 +101,7 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.turbine)
+    testImplementation(libs.mockwebserver)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
