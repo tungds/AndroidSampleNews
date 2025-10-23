@@ -9,5 +9,6 @@ data class Article(
     val description: String?,
     val url: String?,
     @Json(name = "urlToImage") val imageUrl: String?,
-    val content: String?
+    val content: String?,
+    val publishedAt: String
 )

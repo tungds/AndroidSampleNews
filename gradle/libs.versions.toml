@@ -48,6 +48,7 @@ moshi-kotlin-generator = { group = "com.squareup.moshi", name = "moshi-kotlin-co
 #Corotines
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.10.2" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version = "1.10.2" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version = "1.10.2" }
 
 #coil
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version = "2.7.0" }
