@@ -19,8 +19,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient() {
-        // Implementation for providing OkHttpClient
+    fun provideOkHttpClient(): OkHttpClient {
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(
                 HttpLoggingInterceptor().apply {
@@ -28,6 +27,7 @@ object NetworkModule {
                 }
             )
             .build()
+        return okHttpClient
     }
 
     @Provides
@@ -36,7 +36,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient, moshi: Moshi): Retrofit {
+    fun provideRetrofit(okHttpClient: OkHttpClient,
+                        moshi: Moshi): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)
