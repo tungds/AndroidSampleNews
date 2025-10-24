@@ -24,22 +24,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.samplearchitecture.data.Article
+
+
+@Composable
+internal fun NewsHomeScreen(
+    newsHomeViewModel: NewsHomeViewModel = hiltViewModel(),
+    onItemClick: (Article) -> Unit
+) {
+    val uiState by newsHomeViewModel.uiState.collectAsStateWithLifecycle()
+    NewsHomeScreen(
+        uiState,
+        onItemClick
+    )
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsHomeScreen(
-    navController: NavController,
-    newsHomeViewModel: NewsHomeViewModel = hiltViewModel()
+    uiState: NewsHomeUiState,
+    onItemClick: (Article) -> Unit
 ) {
     Scaffold(topBar = {
         TopAppBar(
@@ -47,28 +60,29 @@ fun NewsHomeScreen(
         )
     }) { paddingValues ->
 
-        val uiState by newsHomeViewModel.uiState.collectAsStateWithLifecycle()
-
         Box(modifier = Modifier.padding(paddingValues)) {
             when {
                 uiState.isLoading -> {
-                    CircularProgressIndicator(Modifier.align(Alignment.Center))
+                    CircularProgressIndicator(
+                        Modifier
+                            .align(Alignment.Center)
+                            .testTag("loading_indicator")
+                    )
                 }
 
                 uiState.errorMessage != null -> {
                     Text(
-                        text = uiState.errorMessage ?: "",
+                        text = uiState.errorMessage,
                         color = Color.Red,
                         modifier = Modifier.align(Alignment.Center)
+                            .testTag("error_message")
                     )
                 }
 
                 else -> {
                     LazyColumn {
                         items(uiState.articles) {
-                            ArticleItem(article = it, onItemClick = {
-                                //navController.navigate("detail/${it.id}")
-                            })
+                            ArticleItem(article = it, onItemClick = onItemClick)
                         }
                     }
                 }
@@ -118,5 +132,5 @@ fun ArticleItem(
 @Preview
 @Composable
 fun HomeScreenPreview() {
-    NewsHomeScreen(navController = NavController(LocalContext.current))
+    NewsHomeScreen(onItemClick = {})
 }

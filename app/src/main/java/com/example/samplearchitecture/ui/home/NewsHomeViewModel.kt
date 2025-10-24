@@ -19,7 +19,7 @@ data class NewsHomeUiState(
 )
 
 @HiltViewModel
-class   NewsHomeViewModel @Inject constructor(
+class NewsHomeViewModel @Inject constructor(
     private val newsRepository: NewsRepository
 ): ViewModel(){
 
