@@ -26,6 +26,8 @@ class NewsHomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(NewsHomeUiState())
     val uiState: StateFlow<NewsHomeUiState> = _uiState.asStateFlow()
 
+    private var listArticle = listOf<Article>()
+
     init {
         fetchNews()
     }
@@ -35,8 +37,23 @@ class NewsHomeViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             try {
-                val articles = newsRepository.getArticles()
-                _uiState.update { it.copy(isLoading = false, articles = articles) }
+                listArticle = newsRepository.getArticles()
+                _uiState.update { it.copy(isLoading = false, articles = listArticle) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
+            }
+        }
+    }
+
+    fun searchNews(query: String) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            try {
+                val filteredArticles = listArticle.filter {
+                    it.title.contains(query, ignoreCase = true) ||
+                    it.description?.contains(query, ignoreCase = true)?:false
+                }
+                _uiState.update { it.copy(isLoading = false, articles = filteredArticles) }
             } catch (e: Exception) {
                 _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
             }

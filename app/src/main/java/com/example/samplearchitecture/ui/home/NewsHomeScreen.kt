@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,9 +17,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,7 +47,8 @@ internal fun NewsHomeScreen(
     val uiState by newsHomeViewModel.uiState.collectAsStateWithLifecycle()
     NewsHomeScreen(
         uiState,
-        onItemClick
+        onItemClick,
+        onSearchChange = { newsHomeViewModel.searchNews(it) }
     )
 }
 
@@ -52,12 +57,28 @@ internal fun NewsHomeScreen(
 @Composable
 fun NewsHomeScreen(
     uiState: NewsHomeUiState,
-    onItemClick: (Article) -> Unit
+    onItemClick: (Article) -> Unit,
+    onSearchChange: (String) -> Unit
 ) {
+    var query by remember { mutableStateOf("") }
+
     Scaffold(topBar = {
-        TopAppBar(
-            title = { Text("ComposeNews") },
-        )
+        Column(Modifier.statusBarsPadding()) {
+            TextField(
+                value = query,
+                onValueChange = {
+                    query = it
+                    onSearchChange(it)
+                },
+                placeholder = { Text("Search news...") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .testTag("search_field"),
+                singleLine = true,
+                shape = RoundedCornerShape(16.dp)
+            )
+        }
     }) { paddingValues ->
 
         Box(modifier = Modifier.padding(paddingValues)) {
@@ -74,13 +95,14 @@ fun NewsHomeScreen(
                     Text(
                         text = uiState.errorMessage,
                         color = Color.Red,
-                        modifier = Modifier.align(Alignment.Center)
+                        modifier = Modifier
+                            .align(Alignment.Center)
                             .testTag("error_message")
                     )
                 }
 
                 else -> {
-                    LazyColumn {
+                    LazyColumn(Modifier.testTag("articles_list")) {
                         items(uiState.articles) {
                             ArticleItem(article = it, onItemClick = onItemClick)
                         }
