@@ -52,7 +52,8 @@ class NewsRepositoryTest {
                   "description": "Something happened.",
                   "url": "https://news.com/article1",
                   "urlToImage": "https://news.com/image1.jpg",
-                  "content": "Full article content here."
+                  "content": "Full article content here.",
+                  "publishedAt": "2024-06-01"
                 }
               ]
             }

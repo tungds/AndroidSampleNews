@@ -3,9 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.android)
-    id("kotlin-kapt")
     id("com.google.devtools.ksp")
-
+    id("kotlin-parcelize")
 }
 
 android {
@@ -45,12 +44,12 @@ android {
         }
     }
 
-    kapt {
+/*    kapt {
         javacOptions {
             option("-source", "11")
             option("-target", "11")
         }
-    }
+    }*/
 
     kotlin {
         jvmToolchain(11)
@@ -81,7 +80,7 @@ dependencies {
 
     //Hilt
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
 
     //Network
@@ -95,8 +94,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
 
-    //Image Loading
+    //Other
     implementation(libs.coil.compose)
+    implementation(libs.gson)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
@@ -109,6 +109,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.androidx.archcore.testing)
     // AndroidX Test - Hilt testing
     androidTestImplementation(libs.hilt.android.testing)
     kspAndroidTest(libs.hilt.compiler)

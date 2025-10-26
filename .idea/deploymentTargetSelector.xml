@@ -5,19 +5,16 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="NewsHomeScreenTest">
+      <SelectionState runConfigName="detailsScreen_displaysArticleDetails()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="NewsHomeScreenTest (1)">
+      <SelectionState runConfigName="homescreen_clickNewsItem_navigateToDetailScreen()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="errorMessage_whenScreenHasError_displaysErrorMessage()">
+      <SelectionState runConfigName="NavGraphTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="showsListOfArticles_whenScreenHasArticles_displaysArticles()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="searchField_whenTextEntered_updatesQuery()">
+      <SelectionState runConfigName="homescreen_searchNews_clickNewsItem_navigateToDetailScreen()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
