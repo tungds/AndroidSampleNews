@@ -10,6 +10,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeDown
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.samplearchitecture.data.Article
 import com.example.samplearchitecture.ui.home.NewsHomeScreen
@@ -167,7 +169,8 @@ class NewsHomeScreenTest {
                     NewsHomeScreen(
                         uiState = NewsHomeUiState(isLoading = false, articles = listArticle),
                         onItemClick = {},
-                        onSearchChange = {}
+                        onSearchChange = {},
+                        onRefresh = {}
                     )
                 }
             }
@@ -208,5 +211,34 @@ class NewsHomeScreenTest {
         listArticle.forEach { article ->
             composeTestRule.onNodeWithText(article.title).assertExists()
         }
+    }
+
+    @Test
+    fun pullToRefresh_whenSwiped_callsOnRefresh(){
+        var refreshCalled = false
+        composeTestRule.setContent {
+            SampleArchitectureTheme {
+                Surface {
+                    NewsHomeScreen(
+                        uiState = NewsHomeUiState(isLoading = false, articles = listArticle),
+                        onItemClick = {},
+                        onSearchChange = {},
+                        onRefresh = { refreshCalled = true }
+                    )
+                }
+            }
+        }
+
+        // Simulate pull-to-refresh gesture
+        val articlesList = composeTestRule.onNodeWithTag(TAG_ARTICLES_LIST)
+        articlesList.performTouchInput {
+            swipeDown()
+        }
+
+        composeTestRule.waitUntil(2000){
+            refreshCalled
+        }
+        // Verify that the onRefresh callback was called
+        assert(refreshCalled)
     }
 }

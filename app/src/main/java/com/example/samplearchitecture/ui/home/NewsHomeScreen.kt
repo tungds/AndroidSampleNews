@@ -1,9 +1,9 @@
 package com.example.samplearchitecture.ui.home
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,6 +18,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,10 +47,12 @@ internal fun NewsHomeScreen(
     onItemClick: (Article) -> Unit
 ) {
     val uiState by newsHomeViewModel.uiState.collectAsStateWithLifecycle()
+
     NewsHomeScreen(
         uiState,
         onItemClick,
-        onSearchChange = { newsHomeViewModel.searchNews(it) }
+        onSearchChange = { newsHomeViewModel.searchNews(it) },
+        onRefresh = { newsHomeViewModel.fetchNews() }
     )
 }
 
@@ -58,9 +62,11 @@ internal fun NewsHomeScreen(
 fun NewsHomeScreen(
     uiState: NewsHomeUiState,
     onItemClick: (Article) -> Unit,
-    onSearchChange: (String) -> Unit
+    onSearchChange: (String) -> Unit,
+    onRefresh: () -> Unit = {},
 ) {
     var query by rememberSaveable { mutableStateOf("") }
+    val pullToRefreshState = rememberPullToRefreshState()
 
     Scaffold(topBar = {
         Column(Modifier.statusBarsPadding()) {
@@ -81,9 +87,14 @@ fun NewsHomeScreen(
         }
     }) { paddingValues ->
 
-        Box(modifier = Modifier.padding(paddingValues)) {
+        PullToRefreshBox(
+            isRefreshing = uiState.isLoading,
+            onRefresh = onRefresh,
+            state = pullToRefreshState,
+            modifier = Modifier.padding(paddingValues)
+        ) {
             when {
-                uiState.isLoading -> {
+                uiState.isLoading && uiState.articles.isEmpty()-> {
                     CircularProgressIndicator(
                         Modifier
                             .align(Alignment.Center)
@@ -102,7 +113,10 @@ fun NewsHomeScreen(
                 }
 
                 else -> {
-                    LazyColumn(Modifier.testTag("articles_list")) {
+                    LazyColumn(Modifier
+                        .testTag("articles_list")
+                        .fillMaxSize()
+                    ) {
                         items(uiState.articles) {
                             ArticleItem(article = it, onItemClick = onItemClick)
                         }

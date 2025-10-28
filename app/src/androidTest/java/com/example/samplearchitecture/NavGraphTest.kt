@@ -22,8 +22,6 @@ import org.junit.runner.RunWith
 @LargeTest
 class NavGraphTest {
 
-    //    @get:Rule(order = 0)
-//    val hiltRule = HiltAndroidRule(this)
     // Executes tasks in the Architecture Components in the same thread
     @get:Rule(order = 0)
     var instantTaskExecutorRule = InstantTaskExecutorRule()
