@@ -1,5 +1,6 @@
 package com.example.samplearchitecture.di
 
+import com.example.samplearchitecture.data.remote.NewsApiService
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -19,8 +20,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient() {
-        // Implementation for providing OkHttpClient
+    fun provideOkHttpClient(): OkHttpClient {
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(
                 HttpLoggingInterceptor().apply {
@@ -28,6 +28,7 @@ object NetworkModule {
                 }
             )
             .build()
+        return okHttpClient
     }
 
     @Provides
@@ -36,11 +37,18 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient, moshi: Moshi): Retrofit {
+    fun provideRetrofit(okHttpClient: OkHttpClient,
+                        moshi: Moshi): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideNewsApiService(retrofit: Retrofit): NewsApiService{
+        return retrofit.create(NewsApiService::class.java)
     }
 }
